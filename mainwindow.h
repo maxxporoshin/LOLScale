@@ -14,7 +14,7 @@ class MainWindow : public QMainWindow
 
 public:
     QListWidget *mainList;
-
+    QLabel *label;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 

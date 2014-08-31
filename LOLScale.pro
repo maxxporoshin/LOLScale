@@ -15,16 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     resource.cpp \
-    mainlist.cpp \
-    storage.cpp
+    champ.cpp \
+    gui.cpp
 
 HEADERS  += mainwindow.h \
-    libs.h
+    libs.h \
+    champ.h
 
 FORMS    += mainwindow.ui
 
 DEFINES += PROJECT_PATH=\"\\\"$$PWD\\\"\"
-
-RESOURCES += \
-    misc.qrc \
-    misc.qrc

@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     mainList = this->findChild<QListWidget*>("mainList");
+    label = this->findChild<QLabel*>("label");
 }
 
 MainWindow::~MainWindow()
