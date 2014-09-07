@@ -5,12 +5,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    mainList = this->findChild<QListWidget*>("mainList");
-    label = this->findChild<QLabel*>("label");
+    mainList = ui->mainList;
+    labelLoad = ui->labelLoad;
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
     delete mainList;
+    delete labelLoad;
 }

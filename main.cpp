@@ -1,24 +1,21 @@
 #include "libs.h"
-const QString CHAMP_LIST_PATH = "championList.txt";
+
+const QString CHAMP_LIST_FILE = "championList.txt";
 const int HASH_ALIGN = 20000;
-const QString CHAMP_FOLDER_PATH = "Champions";
+const QString IMG_FOLDER_PATH = "Images";
+const bool PACK_NEEDED = false;
+const QString IMG_PACK_FILE = "images.pack";
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow mainWindow;
-    QVector<Champ> vectorChamp;
-    setNamesInVector(&vectorChamp, CHAMP_LIST_PATH);
-    setHashWithNames(&vectorChamp, "pack.pack");
-    packImages("pack.pack", CHAMP_FOLDER_PATH, HASH_ALIGN); //this FU doesn't work
-    HashImg hash = getHash("pack.pack");
-    QFile f("pack.pack");
-    f.open(QIODevice::ReadOnly);
-    f.seek(hash["zed_load.jpg"].first.first);
-    QByteArray ba = f.read(hash["zed_load.jpg"].first.second - hash["zed_load.jpg"].first.first);
-    QPixmap im;
-    im.loadFromData(ba);
-    mainWindow.label->setPixmap(im);
+    if (PACK_NEEDED)
+    {
+        setImgHash(CHAMP_LIST_FILE, IMG_PACK_FILE);
+        packImages(IMG_PACK_FILE, IMG_FOLDER_PATH, HASH_ALIGN);
+    }
+    initMainList(mainWindow, CHAMP_LIST_FILE, IMG_PACK_FILE);
     mainWindow.show();
     return a.exec();
 }

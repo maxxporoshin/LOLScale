@@ -29,10 +29,10 @@ QString getImageName(const QString &name, int type)
     return imgName;
 }
 
-HashImg getHash(const QString &filePath)
+HashImg getHash(const QString &packFilePath)
 {
     HashImg hash;
-    QFile file(filePath);
+    QFile file(packFilePath);
     file.open(QIODevice::ReadOnly);
     QDataStream in(&file);
     in >> hash;
@@ -40,27 +40,19 @@ HashImg getHash(const QString &filePath)
     return hash;
 }
 
-void setNamesInVector(QVector<Champ> *vector, const QString &listFilePath)
-{
-    QFile champs(listFilePath);
-    champs.open(QIODevice::ReadOnly);
-    QTextStream inTextStream(&champs);
-    while(!inTextStream.atEnd())
-    {
-        QString chName = inTextStream.readLine();
-        Champ ch(chName);
-        vector->append(ch);
-    }
-    champs.close();
-}
-
-int setHashWithNames(QVector<Champ> *vector, const QString &dest)
+int setImgHash(const QString &listFilePath, const QString &destFilePath)
 {
     HashImg hash;
-    for (QVector<Champ>::iterator it = vector->begin(); it != vector->end(); ++it)
+    QFile chList(listFilePath);
+    chList.open(QIODevice::ReadOnly | QIODevice::Text);
+    QTextStream inStream(&chList);
+    while (!inStream.atEnd())
+    {
+        QString champName = inStream.readLine();
         for (int i = 0; i <= 2; ++i)
-            hash[getImageName(it->getName(), i)] = qMakePair(qMakePair(0, 0), it->getName());
-    QFile file(dest);
+            hash[getImageName(champName, i)];
+    }
+    QFile file(destFilePath);
     bool empty = !file.size();
     file.open(QIODevice::WriteOnly);
     QDataStream out(&file);
@@ -70,60 +62,43 @@ int setHashWithNames(QVector<Champ> *vector, const QString &dest)
     else return 0;
 }
 
-void packImages(const QString &dest, const QString &srcFolderPath, int align) //PROB_TO_SOLVE: WRITE-READ HASH (IT DOESN'T FUCKIN WORK)
+void packImages(const QString &destFilePath, const QString &imgFolderPath, int align)
 {
     HashImg hash;
-    QFile pack(dest);
+    QFile pack(destFilePath);
     pack.open(QIODevice::ReadWrite);
     QDataStream hashStream(&pack);
     hashStream >> hash;
     pack.seek(align);
     int from;
-    int to;
+    int size;
     for (HashImg::iterator it = hash.begin(); it != hash.end(); ++it)
     {
-        for (int i = 0; i <= 2; ++i)
-        {
-            QFile imgFile(srcFolderPath + '/' + it.value().second + '/' + it.key());
-            imgFile.open(QIODevice::ReadOnly);
-            QByteArray imgBA = imgFile.readAll();
-            from = pack.pos();
-            qDebug() << from;
-            pack.write(imgBA);
-            to = pack.pos();
-            qDebug() << to;
-            it.value().first = qMakePair(from, to);
-            imgFile.close();
-        }
+        QFile imgFile(imgFolderPath + '/' + it.key());
+        imgFile.open(QIODevice::ReadOnly);
+        QByteArray imgBA = imgFile.readAll();
+        size = imgBA.size();
+        from = pack.pos();
+        pack.write(imgBA);
+        it.value() = qMakePair(from, size);
+        imgFile.close();
     }
     pack.seek(0);
     hashStream << hash;
     pack.close();
 }
 
-/*    QFile pack("test.png");
-    pack.remove();
-    pack.open(QIODevice::ReadWrite);
-    QFile img("zed_32.png");
-    img.open(QIODevice::ReadOnly);
-    QFile img2("aatrox_32.png");
-    img2.open(QIODevice::ReadWrite);
-    QByteArray ba = img.readAll();
-    int s = ba.size();
-    QPixmap im;
-    im.loadFromData(ba);
-    pack.seek(1000);
-    pack.write(ba);
-    ba = img2.readAll();
-    pack.write(ba);
-    ba.clear();
-    QBuffer buf(&ba);
-    //im.save(&buf, "PNG");
-    pack.seek(1000);
-    ba = pack.read(s);
-    im.loadFromData(ba);
-    qDebug() << ba.size() << buf.size();
-    mainWindow.label->setPixmap(im);
-    pack.close();
-    img.close();
-*/
+QIcon getIcon(const QString &packFilePath, const QString &champName, int type)
+{
+    HashImg hash = getHash(packFilePath);
+    QFile pack(packFilePath);
+    pack.open(QIODevice::ReadOnly);
+    QString imgFileName = getImageName(champName, type);
+    pack.seek(hash[imgFileName].first);
+    QByteArray ba = pack.read(hash[imgFileName].second);
+    QPixmap pixmap;
+    pixmap.loadFromData(ba);
+    return *(new QIcon(pixmap));
+}
+
+
