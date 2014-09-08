@@ -1,6 +1,6 @@
 #include "libs.h"
 
-QString getImageName(const QString &name, int type)
+QString getImageName(const QString &champName, int type)
 {
     QString imgType;
     switch (type)
@@ -18,7 +18,7 @@ QString getImageName(const QString &name, int type)
         imgType = "";
         break;
     }
-    QString imgName = name;
+    QString imgName = champName;
     imgName = imgName.toLower();
     imgName.remove(QChar('\''));
     imgName.remove(QChar('.'));
@@ -29,10 +29,10 @@ QString getImageName(const QString &name, int type)
     return imgName;
 }
 
-HashImg getHash(const QString &packFilePath)
+HashTable getHash(const QString &packFile)
 {
-    HashImg hash;
-    QFile file(packFilePath);
+    HashTable hash;
+    QFile file(packFile);
     file.open(QIODevice::ReadOnly);
     QDataStream in(&file);
     in >> hash;
@@ -40,10 +40,10 @@ HashImg getHash(const QString &packFilePath)
     return hash;
 }
 
-int setImgHash(const QString &listFilePath, const QString &destFilePath)
+int setImgHash(const QString &champListFile, const QString &imgPackFile)
 {
-    HashImg hash;
-    QFile chList(listFilePath);
+    HashTable hash;
+    QFile chList(champListFile);
     chList.open(QIODevice::ReadOnly | QIODevice::Text);
     QTextStream inStream(&chList);
     while (!inStream.atEnd())
@@ -52,7 +52,7 @@ int setImgHash(const QString &listFilePath, const QString &destFilePath)
         for (int i = 0; i <= 2; ++i)
             hash[getImageName(champName, i)];
     }
-    QFile file(destFilePath);
+    QFile file(imgPackFile);
     bool empty = !file.size();
     file.open(QIODevice::WriteOnly);
     QDataStream out(&file);
@@ -62,19 +62,19 @@ int setImgHash(const QString &listFilePath, const QString &destFilePath)
     else return 0;
 }
 
-void packImages(const QString &destFilePath, const QString &imgFolderPath, int align)
+void packImages(const QString &imgPackFile, const QString &imgFolder, int align)
 {
-    HashImg hash;
-    QFile pack(destFilePath);
+    HashTable hash;
+    QFile pack(imgPackFile);
     pack.open(QIODevice::ReadWrite);
     QDataStream hashStream(&pack);
     hashStream >> hash;
     pack.seek(align);
     int from;
     int size;
-    for (HashImg::iterator it = hash.begin(); it != hash.end(); ++it)
+    for (HashTable::iterator it = hash.begin(); it != hash.end(); ++it)
     {
-        QFile imgFile(imgFolderPath + '/' + it.key());
+        QFile imgFile(imgFolder + '/' + it.key());
         imgFile.open(QIODevice::ReadOnly);
         QByteArray imgBA = imgFile.readAll();
         size = imgBA.size();
@@ -88,17 +88,17 @@ void packImages(const QString &destFilePath, const QString &imgFolderPath, int a
     pack.close();
 }
 
-QIcon getIcon(const QString &packFilePath, const QString &champName, int type)
+QPixmap getImage(const QString &imgPackFile, const QString &champName, int type)
 {
-    HashImg hash = getHash(packFilePath);
-    QFile pack(packFilePath);
+    HashTable hash = getHash(imgPackFile);
+    QFile pack(imgPackFile);
     pack.open(QIODevice::ReadOnly);
     QString imgFileName = getImageName(champName, type);
     pack.seek(hash[imgFileName].first);
     QByteArray ba = pack.read(hash[imgFileName].second);
     QPixmap pixmap;
     pixmap.loadFromData(ba);
-    return *(new QIcon(pixmap));
+    return pixmap;
 }
 
 

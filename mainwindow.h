@@ -13,10 +13,15 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    QListWidget *mainList;
-    QLabel *labelLoad;
+    QString imgPackFile;
+    QString champListFile;
+    void connection();
+    void initMainList();
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+public slots:
+    void setLabels(QListWidgetItem* item);
 
 private:
     Ui::MainWindow *ui;
