@@ -15,7 +15,6 @@ class MainWindow : public QMainWindow
 public:
     QString imgPackFile;
     QString champListFile;
-    void connection();
     void initMainList();
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();

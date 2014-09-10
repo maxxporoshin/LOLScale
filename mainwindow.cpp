@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     imgPackFile = "images.pack";
     ui->setupUi(this);
     initMainList();
-    connection();
+    connect(this->ui->mainList, &QListWidget::itemClicked, this, &MainWindow::setLabels);
 }
 
 MainWindow::~MainWindow()
@@ -21,11 +21,6 @@ void MainWindow::setLabels(QListWidgetItem* item)
     QPixmap pixmap(getImage(this->imgPackFile, item->text(), 2));
     this->ui->labelLoad->setPixmap(pixmap);
     this->ui->labelName->setText(item->text());
-}
-
-void MainWindow::connection()
-{
-    connect(this->ui->mainList, &QListWidget::itemClicked, this, &MainWindow::setLabels);
 }
 
 void MainWindow::initMainList()
