@@ -4,6 +4,16 @@
 #include <QMainWindow>
 #include <QtWidgets>
 
+struct Champ
+{
+    QString rpCost;
+    QString ipCost;
+    QString popularity;
+    QString winRate;
+    QString banRate;
+    QString released;
+};
+
 namespace Ui {
 class MainWindow;
 }
@@ -14,13 +24,14 @@ class MainWindow : public QMainWindow
 
 public:
     QString imgPackFile;
-    QString champListFile;
+    QString statsFile;
     void initMainList();
+    void pack(const QString &imgFolderPath, int hashAlign, bool isNeeded);
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 public slots:
-    void setLabels(QListWidgetItem* item);
+    void setLabels();
 
 private:
     Ui::MainWindow *ui;

@@ -40,15 +40,15 @@ HashTable getHash(const QString &packFile)
     return hash;
 }
 
-int setImgHash(const QString &champListFile, const QString &imgPackFile)
+int setImgHash(const QString &statsFile, const QString &imgPackFile)
 {
     HashTable hash;
-    QFile chList(champListFile);
+    QFile chList(statsFile);
     chList.open(QIODevice::ReadOnly | QIODevice::Text);
     QTextStream inStream(&chList);
     while (!inStream.atEnd())
     {
-        QString champName = inStream.readLine();
+        QString champName = inStream.readLine().section('@', 1, 1);
         for (int i = 0; i <= 2; ++i)
             hash[getImageName(champName, i)];
     }
@@ -101,4 +101,26 @@ QPixmap getImage(const QString &imgPackFile, const QString &champName, int type)
     return pixmap;
 }
 
-
+Champ getChampStats(const QString &statsFile, const QString &champName)
+{
+    Champ champ;
+    QFile stats(statsFile);
+    stats.open(QIODevice::ReadOnly | QIODevice::Text);
+    QTextStream inStream(&stats);
+    while (!inStream.atEnd())
+    {
+        QString str = inStream.readLine();
+        if (str.section('@', 1, 1) == champName)
+        {
+            champ.rpCost = str.section('@', 2, 2);
+            champ.ipCost = str.section('@', 3, 3);
+            champ.popularity = str.section('@', 4, 4);
+            champ.winRate = str.section('@', 5, 5);
+            champ.banRate = str.section('@', 6, 6);
+            champ.released = str.section('@', 8, 8);
+            break;
+        }
+    }
+    stats.close();
+    return champ;
+}

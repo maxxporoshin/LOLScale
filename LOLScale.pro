@@ -22,3 +22,5 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui
 
 DEFINES += PROJECT_PATH=\"\\\"$$PWD\\\"\"
+
+OTHER_FILES +=
