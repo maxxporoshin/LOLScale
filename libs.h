@@ -15,7 +15,7 @@ QString getImageName(const QString &champName, int type);
 //gets hash from resource's file
 HashTable getHash(const QString &packFile);
 //fills hash with names and puts it into the file, setting key as an image name(khazix_32.png);
-//returns size of hash file; returns 0 if file wasn't empty
+//returns size of hash file; deletes previous file
 int setImgHash(const QString &statsFile, const QString &imgPackFile);
 //adds images to the resource's file, requieres hash filled with prev foo in the file; and this FU still doesn't work at all
 void packImages(const QString &imgPackFile, const QString &imgFolder, int align);

@@ -26,7 +26,7 @@ public:
     QString imgPackFile;
     QString statsFile;
     void initMainList();
-    void pack(const QString &imgFolderPath, int hashAlign, bool isNeeded);
+    void pack(const QString &imgFolderPath, bool isNeeded);
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 

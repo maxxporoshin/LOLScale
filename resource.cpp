@@ -53,13 +53,12 @@ int setImgHash(const QString &statsFile, const QString &imgPackFile)
             hash[getImageName(champName, i)];
     }
     QFile file(imgPackFile);
-    bool empty = !file.size();
+    file.remove();
     file.open(QIODevice::WriteOnly);
     QDataStream out(&file);
     out << hash;
     file.close();
-    if (!empty) return file.size();
-    else return 0;
+    return file.size();
 }
 
 void packImages(const QString &imgPackFile, const QString &imgFolder, int align)

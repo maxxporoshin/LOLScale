@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     imgPackFile = "images.mmp";
     statsFile = "stats.mmt";
-    pack("Images", 30000, false);
+    pack("Images", false);
     ui->setupUi(this);
     initMainList();
     connect(ui->mainList, &QListWidget::itemSelectionChanged, this, &MainWindow::setLabels);
@@ -45,11 +45,11 @@ void MainWindow::initMainList()
     }
 }
 
-void MainWindow::pack(const QString &imgFolderPath, int hashAlign, bool isNeeded)
+void MainWindow::pack(const QString &imgFolderPath, bool isNeeded)
 {
     if (isNeeded)
     {
-        setImgHash(statsFile, imgPackFile);
+        int hashAlign = setImgHash(statsFile, imgPackFile);
         packImages(imgPackFile, imgFolderPath, hashAlign);
     }
 }
